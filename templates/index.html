@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .logo-container {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <img />
+    <script>
+        let socket = new WebSocket('ws://localhost:8000/')
+        let img = document.querySelector('img')
+
+        let frames = []
+        socket.onmessage = e => {
+            frames.push(e.data)
+        }
+        socket.onopen = () => {
+            setInterval(() => {
+                img.src = `data:image/png;base64,${frames[0]}`
+                if (frames.length > 1) {
+                    frames.shift()
+                }
+            }, 1000/25)
+        }
+    </script>
+</body>
+</html>
