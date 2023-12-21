@@ -1,9 +1,5 @@
-from flask import Flask, Response, render_template, request
+from flask import Flask, render_template, request
 from flask_cors import CORS
-import requests
-import json
-from bs4 import BeautifulSoup
-import re
 
 
 app = Flask(__name__)

@@ -3,30 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <style>
-        .logo-container {
-            display: none;
-        }
-    </style>
+    <title>Stream</title>
 </head>
 <body>
     <img />
+    <div id="enable-audio-message">🔇click para activar el audio</div>
     <script>
         let socket = new WebSocket('ws://localhost:8000/')
         let img = document.querySelector('img')
-
         let frames = []
+        let audios = []
         socket.onmessage = e => {
-            frames.push(e.data)
+            let data = JSON.parse(e.data)
+            audios.push(data.audio)
+            frames.push(data.frames)
         }
         socket.onopen = () => {
             setInterval(() => {
-                img.src = `data:image/png;base64,${frames[0]}`
-                if (frames.length > 1) {
+                img.src = `data:image/png;base64,${frames[0][0]}`
+                frames[0].shift()
+                if (frames[0].length == 0) {
                     frames.shift()
+                    new Audio(`data:audio/wav;base64,${audios[0]}`).play()
+                    audios.shift()
                 }
-            }, 1000/25)
+            }, 1000/25) // FRAMERATE  
+        }
+
+        let audio_message = document.querySelector('#enable-audio-message')
+        document.onclick = () => {
+            audio_message.style.display = 'None'
         }
     </script>
 </body>
